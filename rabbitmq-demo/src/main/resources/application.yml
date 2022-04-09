@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: rabbitmq-simple_example
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+    #确认消息已发送到交换机(Exchange)
+    publisher-confirms: true
+    #确认消息已发送到队列(Queue)
+    publisher-returns: true
+
+    listener:
+      simple:
+        acknowledge-mode: manual #默认情况下消息消费者是自动 ack （确认）消息的，如果要手动 ack（确认）则需要修改确认模式为 manual
+        #并发配置  这个 listener 在这里有 10 个 consumer 实例的配置  每个 consumer 可以预监听消费拉取的消息数量为 5 个（如果同一时间处理不完，会将其缓存在 mq 的客户端等待处理！）
+#        concurrency: 10
+#        max-concurrency: 10
+#        prefetch: 5
+server:
+  port: 8787
