@@ -1,5 +1,0 @@
-com\zxl\nacos\nacosconsumer\NacosConsumerApplication.class
-com\zxl\nacos\nacosconsumer\Controller\FeignController.class
-com\zxl\nacos\nacosconsumer\Controller\RobbinController.class
-com\zxl\nacos\nacosconsumer\service\FeignHiServiceImpl.class
-com\zxl\nacos\nacosconsumer\service\FeignHiService.class
