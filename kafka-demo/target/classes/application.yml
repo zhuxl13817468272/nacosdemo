@@ -1,0 +1,20 @@
+server:
+  port: 8075
+spring:
+  kafka:
+    bootstrap-servers: 10.228.131.21:9092
+    producer:
+      acks: 1
+      retries: 3
+      batch-size: 16384
+      buffer-memory: 33554432
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: default-group
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest
+    listener:
+      ack-mode: manual_immediate  # 手动调用Acknowledgment.acknowledge()后立即提交，一般使用这种
