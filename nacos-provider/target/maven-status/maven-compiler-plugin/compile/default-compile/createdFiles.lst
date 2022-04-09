@@ -1,4 +1,0 @@
-com\zxl\nacos\nacosprovider\NacosProviderApplication.class
-com\zxl\nacos\nacosprovider\comtroller\ConfigController.class
-com\zxl\nacos\nacosprovider\comtroller\EchoController.class
-com\zxl\nacos\nacosprovider\service\TestService.class
