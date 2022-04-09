@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zxl.nacos.shardingspheredemo.mapper.OrderConfigMapper">
+
+    <sql id="FIELDS">
+        id, pay_timeout
+    </sql>
+
+    <select id="selectByPayTimeout" parameterType="Integer" resultType="com.zxl.nacos.shardingspheredemo.entity.OrderConfigDO">
+        SELECT
+        <include refid="FIELDS" />
+        FROM order_config
+        WHERE pay_timeout = #{payTimeout}
+    </select>
+
+
+    <insert id="insert" parameterType="com.zxl.nacos.shardingspheredemo.entity.OrderConfigDO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO order_config (
+            pay_timeout
+        ) VALUES (
+            #{payTimeout}
+        )
+    </insert>
+
+</mapper>

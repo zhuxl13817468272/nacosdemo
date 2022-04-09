@@ -1,0 +1,13 @@
+server:
+  port: 8075
+
+spring:
+  profiles:
+    active: binder
+
+
+# mybatis 用mybatis注解，mybatis-plus用mybatis-plus注解
+mybatis-plus:
+  mapper-location: classpath:mybatis-config.xml
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.zxl.nacos.shardingspheredemo.entity
