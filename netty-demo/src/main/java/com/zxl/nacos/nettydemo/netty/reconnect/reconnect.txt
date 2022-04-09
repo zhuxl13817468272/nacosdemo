@@ -1,0 +1,13 @@
+Netty基础知识：
+    一、chat编码解码器(chat);
+    二、自定编码解码器(codec);
+    三、拆包及粘包解决(splitPacket);
+Netty应用
+    四、服务端心跳检测(heartBeat);
+    五、客户端断线重连(reconnect);
+
+    Netty客户端断线自动重连实现
+        1、客户端启动时，网络故障或服务端故障，连接服务端会失败，需要重连，重连的逻辑加在客户端。
+            参见代码com.zxl.nacos.nettydemo.reconnect.ReconnetClient
+        2、系统运行过程中，网络故障或服务端故障，导致客户端与服务端断开连接，也需要重连，可以在客户端处理数据的Handler的channelInactive方法中进行重连。
+            参见代码com.zxl.nacos.nettydemo.reconnect.ReconnetClientHandler

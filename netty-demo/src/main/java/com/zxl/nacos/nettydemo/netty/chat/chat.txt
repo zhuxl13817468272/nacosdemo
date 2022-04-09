@@ -1,0 +1,25 @@
+Netty基础知识：
+    一、chat编码解码器(chat);
+    二、自定编码解码器(codec);
+    三、拆包及粘包解决(splitPacket);
+Netty应用
+    四、服务端心跳检测(heartBeat);
+    五、客户端断线重连(reconnect);
+
+编码解码器
+    入站/出站：
+        ChannelPipeline提供了ChannelHandler链的容器。
+        以事件的运动方向是从客户端到服务端的为例：
+            事件对于服务端来说是入站，事件数据只调用pipeline里的ChannelInboundHandler逻辑(ChannelInboundHandler调用是从head到tail方向逐个调用每个handler的逻辑)。
+            事件对于客户端来说为出站，事件数据会通过pipeline中的一系列ChannelOutboundHandler(ChannelOutboundHandler调用是从tail到head方向逐个调用每个handler的逻辑)。
+
+    编码解码器：
+        编码：由另一种格式（比如java对象）转为字节。出站的消息会被解码成字节码，以便在网络中传输。
+        解码：从字节转换为另一种格式（比如java对象）。入站消息会被解码成对象，以便程序使用。
+
+    Netty编码解码器
+        Netty提供了一系列实用的编码解码器，他们都实现了ChannelInboundHadnler或者ChannelOutboundHandler接口。在这些类中，channelRead方法已经被重写了。
+        以入站为例，对于每个从入站Channel读取的消息，它将调用由解码器所提供的decode()方法进行解码，并将已经解码的字节转发给ChannelPipeline中的下一个ChannelInboundHandler。
+
+        编解码字符串的StringEncoder和StringDecoder，编解码对象的ObjectEncoder和ObjectDecoder，以及更有效的编解码方式protobuf，现在一般可以使用protostuff）。
+        因为protobuf需要维护大量的proto文件比较麻烦，protostuff是一个基于protobuf实现的序列化方法，在几乎不损耗性能的情况下，写.proto文件来实现序列化。使用它也非常简单。

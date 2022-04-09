@@ -1,0 +1,41 @@
+1. NIO的堆内存与直接内存的区别 --> 零拷贝
+    java.nio.ByteBuffer
+    //分配堆内存
+    ByteBuffer buffer = ByteBuffer.allocate(1000);
+    //分配直接内存
+    ByteBuffer buffer = ByteBuffer.allocateDirect(1000);
+
+    普通的ByteBuffer仍在JVM堆上分配内存，其最大内存受到最大堆内存的限制；
+    而DirectBuffer直接分配在物理内存中，并不占用堆空间，其可申请的最大内存受操作系统限制。
+    直接内存的读写操作比普通Buffer快，但它的创建、销毁比普通Buffer慢。
+
+    （Note：DirectBuffer并没有真正向OS申请分配内存，其最终还是通过调用Unsafe(该类的方法最终都会调用linux内核方法)的allocateMemory()来进行内存分配。
+            没有JVM直接帮助管理内存，容易发生内存溢出。为了避免一直没有FULL GC，最终导致直接内存把物理内存耗完。我们可以通过-XX：MaxDirectMemorySize来指定内存的最大值，当达到阈值时，调用system.gc来进行一次FULL GC，间接把那些没有被使用的直接内存回收掉。）
+
+    零拷贝                                                               server
+      *                               -------------------------------------------------------------------------------------------
+      *                               |                                                                                          |
+      *      --------                 |        read       ---------------            ----------------           -------------    |
+      *     |        | -http三次握手---|网卡--> accept--- | established   |  -------->|               | -------->|            |   |
+      *     | client |                |        write     | socket buffer |     copy  | direct buffer |   ？？？  |   jvm堆    |   |
+      *     |        | <---- http ----|网卡 <----------- | 内核缓冲区     | <-------- |   物理缓冲区   | <--------| 内存缓存区  |   |
+      *     ---------                 |                  ----------------            ----------------           -------------    |
+      *                               |                    linux                    netty/tomcat(epoll)         webapp(web.xml)  |
+      *                               -------------------------------------------------------------------------------------------
+      *    如果jvm堆内存（用户态）引入directBuffer（内核态），则为零拷贝（数据不需要再次拷贝到jvm堆内存）
+      *    如果jvm堆内存（用户态）需要数据从directBuffer（内核态）拷贝，然后更新数据在拷贝到directBuffer（内核态），则为正常NIO操作，不为零拷贝。
+
+
+2. JDK的ByteBuffer 与 Netty的ByteBuf的区别  --> ByteBuf扩容机制
+    java.nio.ByteBuffer: 有一个指针用于处理读写操作，每次读写的时候都需要调用flip()(读写模式切换)或是clear()方法，不然将会报异常。
+    io.netty.buffer.ByteBuf: 通过两个指针协助缓存区的读写操作，分别为 readIndex 和 writerIndex 。
+
+     Netty中ByteBuf扩容机制
+            minNewCapacity:表用户需要写入的值大小
+            threshold:阈值，为ByteBuf内部设定容量的最大值
+            maxCapacity:Netty最大能接受的容量大小，一般为int的最大值
+          值大小由小到大                  64Byte的倍数增加         4M             +4M增加                            throw IllegalArgumentException
+           --------->minNewCapacity----------------------------->threshold---------------------------->maxCapacity--------------------------------->
+
+3. 雪花算法
+    位运算、与运算、或运算
